@@ -44,21 +44,21 @@ function PlaceForm({ currentUserId }) {
     }
 
     return (
-        <section className="mb-8 p-6 bg-white rounded-xl shadow-lg border">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add a New Place</h2>
+        <section className="mb-8 p-6 bg-zinc-800 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-semibold text-gray-100 mb-4">Add a New Place</h2>
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
                 <input
                     type="text"
                     value={placeName}
                     onChange={(e) => setPlaceName(e.target.value)}
                     placeholder="E.g., Gran Canyon, Sunset Point"
-                    className="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                    className="flex-grow p-3 border border-amber-50 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
                     maxLength={100}
                     disabled={isSaving}
                 />
                 <button
                     type="submit"
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200 shadow-md disabled:opacity-50 flex items-center justify-center"
+                    className="bg-amber-400 hover:bg-amber-300 text-zinc-800 font-bold py-3 px-6 rounded-lg transition duration-200 cursor-pointer shadow-md disabled:bg-zinc-700 flex items-center justify-center"
                     disabled={isSaving || !placeName.trim()}
                 >
                     {isSaving ? 'Saving...' : 'Save Place'}

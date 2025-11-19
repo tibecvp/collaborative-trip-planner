@@ -41,24 +41,22 @@ function App() {
 
   return (
     <>
-      <div className='bg-gray-100 min-h-screen p-4 md:p-8'>
-        <div className='max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-6 lg:p-10'>
+      <div className='max-w-max mx-auto bg-zinc-900 shadow-xl rounded-2xl p-10 lg:px-36'>
 
-          <header className='mb-8 border-b pb-4'>
-            <h1 className='text-3xl font-extrabold text-indigo-700 tracking-tight'>🗺️ Shared Trip Places POC</h1>
-            <p className='text-gray-500 mt-1'>Real-time collaborative planning with voting.</p>
-          </header>
+        <header className='mb-8 border-b pb-4'>
+          <h1 className='text-3xl font-extrabold text-amber-400 tracking-tight'>🗺️ Shared Trip Places POC</h1>
+          <p className='text-gray-100 mt-1'>Real-time collaborative planning with voting.</p>
+        </header>
 
-          {/* User ID Display */}
-          <div className='bg-indigo-50 border-l-4 border-indigo-500 text-indigo-800 p-3 mb-6' role='alert'>
-            <p className='font-bold text-sm'>Your Current User ID:</p>
-            <p id='userIdDisplay' className='text-lg font-mono truncate'>{currentUserId.slice(-6)}</p>
-          </div>
-
-          {/* Input Form and PLaces List will be rendered here */}
-          <PlaceForm currentUserId={currentUserId} />
-          <PlacesList currentUserId={currentUserId} />
+        {/* User ID Display */}
+        <div className='bg-zinc-200 border-l-4 border-amber-500 text-amber-600 p-3 mb-6' role='alert'>
+          <p className='font-bold text-sm'>Your Current User ID:</p>
+          <p id='userIdDisplay' className='text-lg font-mono truncate'>{currentUserId.slice(-6)}</p>
         </div>
+
+        {/* Input Form and PLaces List will be rendered here */}
+        <PlaceForm currentUserId={currentUserId} />
+        <PlacesList currentUserId={currentUserId} />
       </div>
     </>
   )

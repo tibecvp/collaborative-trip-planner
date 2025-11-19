@@ -96,33 +96,33 @@ function PlacesList({ currentUserId }) {
 
     return (
         <section>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 border-t pt-4">Shared Places List (Ordered by Votes)</h2>
+            <h2 className="text-2xl font-semibold text-gray-100 mb-4 border-t pt-4">Shared Places List (Ordered by Votes)</h2>
             <div id="placesList" className="space-y-3">
                 {places.length === 0 ? (
-                    <p className="text-center text-gray-500 italic p-4 border rounded-lg">No places saved yet. Be the first!</p>
+                    <p className="text-center text-gray-400 italic p-4 border rounded-lg">No places saved yet. Be the first!</p>
                 ) : (
                     places.map((place) => (
                         <div
                             key={place.id}
-                            className="place-item flex justify-between items-center p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition duration-150"
+                            className="place-item flex justify-between items-center p-4 bg-zinc-800 rounded-lg shadow-sm hover:shadow-md transition duration-150"
                         >
-                            <div>
-                                <p className="text-lg font-medium text-gray-900">{place.name}</p>
-                                <p className="text-sm text-gray-500 truncate mt-1">
-                                    Saved by: @
-                                    <span className={`font-mono ml-1 ${place.userId === currentUserId ? 'text-indigo-600 font-semibold' : ''}`}>
-                                        {place.userId.slice(-6)}
+                            <div className="text-left">
+                                <p className="text-lg font-medium text-amber-200">{place.name}</p>
+                                <p className="text-sm text-gray-200 truncate mt-1">
+                                    Saved by:
+                                    <span className={`font-mono ml-1 text-amber-400 ${place.userId === currentUserId ? 'font-semibold' : ''}`}>
+                                        @{place.userId.slice(-6)}
                                     </span>
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center text-gray-700 font-bold text-xl">
+                                <div className="flex items-center font-bold text-xl">
                                     {place.voteCount}
-                                    <span className="text-lg ml-1">★</span>
+                                    <span className="text-lg text-amber-400 ml-1">★</span>
                                 </div>
                                 <button
                                     onClick={() => handleVote(place.id)}
-                                    className={`py-2 px-4 rounded-full text-sm font-semibold transition duration-150 shadow-md ${votingStatus[place.id] ? 'bg-gray-400 text-gray-700 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'
+                                    className={`py-2 px-4 rounded-full text-sm font-semibold transition duration-150 shadow-md cursor-pointer ${votingStatus[place.id] ? 'bg-zinc-700 cursor-not-allowed' : 'bg-amber-400 hover:bg-amber-300 text-zinc-800'
                                         }`}
                                     disabled={votingStatus[place.id]}
                                 >
