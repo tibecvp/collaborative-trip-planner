@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { initializeUser } from './FirebaseConfig'
 import './App.css'
 import PlaceForm from './components/PlaceForm'
-import PlacesList from './components/PLacesList'
+import PlacesList from './components/PlacesList'
 
 function App() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
