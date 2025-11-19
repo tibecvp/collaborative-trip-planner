@@ -141,7 +141,7 @@ function PlacesList({ currentUserId }: PlaceListProps) {
                             <div className="text-left">
                                 <p className="text-lg font-medium text-amber-200">{place.name}</p>
                                 <p className="text-sm text-gray-200 truncate mt-1">
-                                    Saved by:
+                                    Added by:
                                     <span className={`font-mono ml-1 text-amber-400 ${place.userId === currentUserId ? 'font-semibold' : ''}`}>
                                         @{place.userId.slice(-6)}
                                     </span>
