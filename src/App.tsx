@@ -52,7 +52,7 @@ function App() {
           {/* User ID Display */}
           <div className='bg-indigo-50 border-l-4 border-indigo-500 text-indigo-800 p-3 mb-6' role='alert'>
             <p className='font-bold text-sm'>Your Current User ID:</p>
-            <p id='userIdDisplay' className='text-lg font-mono truncate'>{currentUserId}</p>
+            <p id='userIdDisplay' className='text-lg font-mono truncate'>{currentUserId.slice(-6)}</p>
           </div>
 
           {/* Input Form and PLaces List will be rendered here */}

@@ -111,7 +111,7 @@ function PlacesList({ currentUserId }) {
                                 <p className="text-sm text-gray-500 truncate mt-1">
                                     Saved by: @
                                     <span className={`font-mono ml-1 ${place.userId === currentUserId ? 'text-indigo-600 font-semibold' : ''}`}>
-                                        {place.userId}
+                                        {place.userId.slice(-6)}
                                     </span>
                                 </p>
                             </div>
