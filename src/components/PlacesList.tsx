@@ -1,70 +1,101 @@
+// PlacesList.tsx
+
 import { useEffect, useState, useCallback } from "react"
 import { db, SHARED_PLACES_PATH } from "../FirebaseConfig"
-import { collection, onSnapshot, orderBy, query, doc, runTransaction, serverTimestamp } from "firebase/firestore"
+// Import specific types from Firebase
+import {
+    collection, onSnapshot, orderBy, query, doc, runTransaction, serverTimestamp,
+    // Add all necessary types here
+    FirestoreError, type DocumentData, QuerySnapshot, DocumentReference, DocumentSnapshot, FieldValue
+} from "firebase/firestore"
 
-function PlacesList({ currentUserId }) {
-    const [places, setPlaces] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    const [votingStatus, setVotingStatus] = useState({})
+// 1. Interface for a Place document retrieved from Firestore
+interface Place {
+    id: string
+    name: string
+    userId: string
+    voteCount: number
+    timestamp: FieldValue // Can be a Timestamp object after server write, or FieldValue (serverTimestamp)
+}
+
+// 2. Interface for component props
+interface PlaceListProps {
+    currentUserId: string
+}
+
+// 3. Interface for voting status state
+interface VotingStatus {
+    [placeId: string]: boolean
+}
+
+function PlacesList({ currentUserId }: PlaceListProps) {
+    // 4. Type state variables explicitly
+    const [places, setPlaces] = useState<Place[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState<string | null>(null)
+    const [votingStatus, setVotingStatus] = useState<VotingStatus>({})
 
     // Real-Time Read Logic
     useEffect(() => {
-        // 1. Create a query ordered by vote count (highest first)
+        // We use 'db' here, which is of type Firestore (exported from FirebaseConfig.ts)
         const placesQuery = query(
             collection(db, SHARED_PLACES_PATH),
             orderBy('voteCount', 'desc'),
             orderBy('timestamp', 'desc')
         )
 
-        // 2. Set up the real-time listener (onSnapshot)
-        const unsubscribe = onSnapshot(placesQuery, (snapshot) => {
-            const placesData = snapshot.docs.map(doc => ({
+        // 5. Type the onSnapshot handler arguments
+        const unsubscribe = onSnapshot(placesQuery, (snapshot: QuerySnapshot<DocumentData>) => {
+            const placesData: Place[] = snapshot.docs.map(doc => ({
+                // Cast the document data to Place interface for type safety
+                ...doc.data() as Place,
                 id: doc.id,
-                ...doc.data(),
             }))
             setPlaces(placesData)
             console.log('Real-time places update received:', placesData)
             setLoading(false)
-        }, (err) => {
-            console.error('Frestore real-time error:', err)
+        }, (err: FirestoreError) => { // Type the error handler
+            console.error('Firestore real-time error:', err)
             setError('Failed to fetch places in real-time.')
             setLoading(false)
         })
 
-        // 3. Clean up the listener when the component unmounts
         return () => unsubscribe()
     }, [])
 
     // Write/Update Logic (Voting)
-    const handleVote = useCallback(async (placeId) => {
+    const handleVote = useCallback(async (placeId: string) => { // Type placeId as string
         setVotingStatus(prev => ({ ...prev, [placeId]: true }))
 
-        const placeRef = doc(db, SHARED_PLACES_PATH, placeId)
-        const voteRef = doc(db, SHARED_PLACES_PATH, placeId, 'votes', currentUserId)
+        // Type the Document References
+        const placeRef: DocumentReference<DocumentData> = doc(db, SHARED_PLACES_PATH, placeId)
+        const voteRef: DocumentReference<DocumentData> = doc(db, SHARED_PLACES_PATH, placeId, 'votes', currentUserId)
 
         try {
             await runTransaction(db, async (transaction) => {
+
                 // 1. Check for existing vote (Read inside the transaction)
-                const voteDoc = await transaction.get(voteRef)
+                const voteDoc: DocumentSnapshot<DocumentData> = await transaction.get(voteRef)
                 if (voteDoc.exists()) {
                     throw new Error('You have already voted for this place.')
                 }
 
-                // 2. Get the current place data (REad inside the transaction)
-                const placeDoc = await transaction.get(placeRef)
+                // 2. Get the current place data (Read inside the transaction)
+                const placeDoc: DocumentSnapshot<DocumentData> = await transaction.get(placeRef)
                 if (!placeDoc.exists()) {
                     throw new Error('Place document does not exist.')
                 }
 
-                // 3. Atomically write the new vote document (to enforce one-vote-per-user)
+                // 3. Atomically write the new vote document
                 transaction.set(voteRef, {
                     userId: currentUserId,
                     timestamp: serverTimestamp()
                 })
 
-                // 4. Atomically update the place's coteCount (Increment)
-                const newVoteCount = placeDoc.data().voteCount + 1
+                // 4. Atomically update the place's voteCount (Increment)
+                // Use optional chaining just in case data() returns undefined (though checked above)
+                const currentVoteCount = placeDoc.data()?.voteCount ?? 0
+                const newVoteCount = currentVoteCount + 1
 
                 transaction.update(placeRef, { voteCount: newVoteCount })
 
@@ -72,13 +103,14 @@ function PlacesList({ currentUserId }) {
             })
 
             console.log(`Vote cast successfully by ${currentUserId} for place ${placeId}`)
-            // Success message is handled by real-time update
         } catch (err) {
-            // Re-throw if it's a known error (e.g., 'already voted)
-            if (err.message.includes('You have already voted')) {
-                alert(err.message)
+            // Type the error object (assuming it's an Error instance)
+            const error = err as Error
+
+            if (error.message.includes('You have already voted')) {
+                alert(error.message)
             } else {
-                console.error('Transaction failed:', err)
+                console.error('Transaction failed:', error)
                 alert('Failed to cast vote. See console for details.')
             }
         } finally {
@@ -101,7 +133,7 @@ function PlacesList({ currentUserId }) {
                 {places.length === 0 ? (
                     <p className="text-center text-gray-400 italic p-4 border rounded-lg">No places saved yet. Be the first!</p>
                 ) : (
-                    places.map((place) => (
+                    places.map((place: Place) => ( // Ensure map iteration is typed
                         <div
                             key={place.id}
                             className="place-item flex justify-between items-center p-4 bg-zinc-800 rounded-lg shadow-sm hover:shadow-md transition duration-150"

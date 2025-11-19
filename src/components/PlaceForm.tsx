@@ -1,13 +1,29 @@
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
-import { useState } from "react"
+// PlaceForm.tsx
+import { collection, addDoc, serverTimestamp, FieldValue } from "firebase/firestore"
+import { useState, type FormEvent, type ChangeEvent } from "react"
 import { db, SHARED_PLACES_PATH } from "../FirebaseConfig"
 
-function PlaceForm({ currentUserId }) {
-    const [placeName, setPlaceName] = useState('')
-    const [isSaving, setIsSaving] = useState(false)
-    const [error, setError] = useState(null)
+// 1. Interface for Component Props
+interface PlaceFormProps {
+    currentUserId: string // The user ID is guaranteed to be a string by App.tsx
+}
 
-    const handleSubmit = async (e) => {
+// 2. Interface for Firestore Document
+interface PlaceDocument {
+    name: string
+    userId: string
+    voteCount: number
+    timestamp: FieldValue // Use FieldValue for serverTimestamp
+}
+
+function PlaceForm({ currentUserId }: PlaceFormProps) {
+    // 3. Type state variables. error can be null or string.
+    const [placeName, setPlaceName] = useState<string>('')
+    const [isSaving, setIsSaving] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
+
+    // 4. Correctly type the form submission event
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
         setError(null)
         const trimmedName = placeName.trim()
@@ -21,11 +37,11 @@ function PlaceForm({ currentUserId }) {
 
         try {
             // 1. Prepare the new document data
-            const newPlace = {
+            const newPlace: PlaceDocument = {
                 name: trimmedName,
                 userId: currentUserId,
                 voteCount: 0,
-                timestamp: serverTimestamp()
+                timestamp: serverTimestamp(),
             }
 
             // 2. Add the document to the 'shared_places' collection
@@ -37,6 +53,7 @@ function PlaceForm({ currentUserId }) {
             console.log(`New place added by ${currentUserId}: ${trimmedName}`)
         } catch (err) {
             console.error('Error adding document:', err)
+            // FIX: Ensure error message is extracted if it's an object
             setError('Failed to save place. Check console.')
         } finally {
             setIsSaving(false)
@@ -50,7 +67,8 @@ function PlaceForm({ currentUserId }) {
                 <input
                     type="text"
                     value={placeName}
-                    onChange={(e) => setPlaceName(e.target.value)}
+                    // 5. Correctly type the change event
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setPlaceName(e.target.value)}
                     placeholder="E.g., Gran Canyon, Sunset Point"
                     className="flex-grow p-3 border border-amber-50 rounded-lg focus:ring-amber-500 focus:border-amber-500 shadow-sm"
                     maxLength={100}
